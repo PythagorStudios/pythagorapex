@@ -6,6 +6,7 @@ var Game = {fps:5, width:1080, height:720};
 
 var frames = 0;
 
+//this is a loop
 Game.run = (function() {
     var loops = 0;
     var skipTicks = 1000 / Game.fps;
@@ -17,7 +18,7 @@ Game.run = (function() {
         loops = 0;
 
         frames += 1;
-        Game.fps = 1 + Math.floor(Math.abs(60 * Math.sin(frames / 1000)));
+        Game.fps = 1 + Math.floor(Math.abs(60 * Math.sin(frames / 1000))); //what if this is 61
         skipTicks = 1000 / Game.fps;
         //loops = 0 is the only one necessary if FPS does not fluctuate
 
@@ -28,7 +29,7 @@ Game.run = (function() {
         }
 
         if (!loops) {
-            Game.draw((nextGameTick - (new Date).getTime()) / skipTicks);
+            Game.draw((nextGameTick - (new Date).getTime()) / skipTicks); //since when did Game.draw take any parameters
         } else {
             Game.draw(0);
         }
@@ -51,7 +52,7 @@ var y = 100;
 Game.update = function() {
     x = 100 + 10 * randomInt(0, 5);
     y = 100 + 10 * randomInt(0, 5);
-
+//and what the heck do these do?
 
 }
 
