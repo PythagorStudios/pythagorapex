@@ -3,14 +3,14 @@
  */
 
 var frameTask;
-if (window.webkitRequestAnimationFrame) {
-    frameTask = function(cb) {
-        var _cb = function() { cb(); webkitRequestAnimationFrame(_cb); }
-        _cb();
-    };
-} else if (window.requestAnimationFrame) {
+if (window.requestAnimationFrame) {
     frameTask = function(cb) {
         var _cb = function() { cb(); requestAnimationFrame(_cb); }
+        _cb();
+    };
+} else if (window.webkitRequestAnimationFrame) {
+    frameTask = function(cb) {
+        var _cb = function() { cb(); webkitRequestAnimationFrame(_cb); }
         _cb();
     };
 } else if (window.mozRequestAnimationFrame) {
