@@ -25,7 +25,11 @@ if (window.requestAnimationFrame) {
 }
 window.frameTask = frameTask;
 
+var initDone = false;
 window.onload = function() {
-    Game.init(); //Whatever game is loaded in the DOM will be initialized
-    window.frameTask(Game.run); //Whatever game is loaded in the DOM will be ran
+    if (!initDone) {
+        initDone = true;
+        Game.init(); //Whatever game is loaded in the DOM will be initialized
+        window.frameTask(Game.run); //Whatever game is loaded in the DOM will be ran
+    }
 }

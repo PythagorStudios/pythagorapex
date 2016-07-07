@@ -2,7 +2,7 @@
  * Created by finnb on 7/2/16.
  */
 
-var Game = {fps:5, width:1080, height:720};
+var Game = {fps:60, width:1080, height:720};
 
 var frames = 0;
 
@@ -16,10 +16,6 @@ Game.run = (function() {
 
     return function() {
         loops = 0;
-
-        frames += 1;
-        Game.fps = 1 + Math.floor(Math.abs(60 * Math.sin(frames / 1000))); //what if this is 61
-        skipTicks = 1000 / Game.fps;
         //loops = 0 is the only one necessary if FPS does not fluctuate
 
         while ((new Date).getTime() > nextGameTick) {
@@ -29,7 +25,7 @@ Game.run = (function() {
         }
 
         if (!loops) {
-            Game.draw((nextGameTick - (new Date).getTime()) / skipTicks); //since when did Game.draw take any parameters
+            Game.draw((nextGameTick - (new Date).getTime()) / skipTicks); //Pass in elapsed time to be used later.
         } else {
             Game.draw(0);
         }
@@ -37,29 +33,104 @@ Game.run = (function() {
 })();
 
 Game.init = function() {
-    this.canvas = document.getElementById("game");
+    // SCENE
+    this.scene = new THREE.Scene();
+    // CAMERA
+    //var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;
+    var VIEW_ANGLE = 45;
+    var ASPECT = this.width / this.height;
+    var NEAR = 0.1;
+    var FAR = 20000;
+    this.camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
+    this.scene.add(this.camera);
+    this.camera.position.set(0,500,0);
+    this.camera.lookAt(this.scene.position);
+    // RENDERER
+    if ( Detector.webgl )
+        this.renderer = new THREE.WebGLRenderer( {antialias:true} );
+    else
+        this.renderer = new THREE.CanvasRenderer();
+    this.renderer.setSize(this.width, this.height);
+    this.container = document.getElementById( 'game' );
+    this.container.appendChild( this.renderer.domElement );
+    // EVENTS
+    //THREEx.WindowResize(renderer, camera);
+    //THREEx.FullScreen.bindKey({ charCode : 'm'.charCodeAt(0) });
+    // CONTROLS
+    //controls = new THREE.OrbitControls( camera, renderer.domElement );
+    // LIGHT
+    var light = new THREE.PointLight(0xffffff);
+    light.position.set(0,250,0);
+    this.scene.add(light);
+    // FLOOR
+    var floorTexture = new THREE.ImageUtils.loadTexture( "../public/images/crate.gif" );
+    floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping;
+    floorTexture.repeat.set( 10, 10 );
+    var floorMaterial = new THREE.MeshBasicMaterial( { map: floorTexture, side: THREE.DoubleSide } );
+    var floorGeometry = new THREE.PlaneGeometry(1000, 1000, 10, 10);
+    var floor = new THREE.Mesh(floorGeometry, floorMaterial);
+    floor.position.y = -0.5;
+    floor.rotation.x = Math.PI / 2;
+    this.scene.add(floor);
+    // SKYBOX/FOG
+    var skyBoxGeometry = new THREE.CubeGeometry( 10000, 10000, 10000 );
+    var skyBoxMaterial = new THREE.MeshBasicMaterial( { color: 0x9999ff, side: THREE.BackSide } );
+    var skyBox = new THREE.Mesh( skyBoxGeometry, skyBoxMaterial );
+    // scene.add(skyBox);
+    this.scene.fog = new THREE.FogExp2( 0x9999ff, 0.00025 );
 
-    //Set Width and Height of canvas
-    this.canvas.width = this.width;
-    this.canvas.height = this.height;
+    // Using wireframe materials to illustrate shape details.
+    var darkMaterial = new THREE.MeshBasicMaterial( { color: 0xffffcc } );
+    var wireframeMaterial = new THREE.MeshBasicMaterial( { color: 0x000000, wireframe: true, transparent: true } );
+    var multiMaterial = [ darkMaterial, wireframeMaterial ];
 
-    this.context = this.canvas.getContext("2d");
-}
+    this.shapes = [];
 
-var x = 100;
-var y = 100;
+    // cube
+    this.shapes[0] = THREE.SceneUtils.createMultiMaterialObject(
+        new THREE.CubeGeometry(50, 50, 50, 1, 1, 1),
+        multiMaterial );
+    this.shapes[0].position.set(-200, 50, 0);
+    this.scene.add( this.shapes[0] );
+
+    // icosahedron
+    this.shapes[1] = THREE.SceneUtils.createMultiMaterialObject(
+        new THREE.IcosahedronGeometry( 40, 0 ), // radius, subdivisions
+        multiMaterial );
+    this.shapes[1].position.set(-100, 50, 0);
+    this.scene.add( this.shapes[1] );
+
+    // octahedron
+    this.shapes[2] = THREE.SceneUtils.createMultiMaterialObject(
+        new THREE.OctahedronGeometry( 40, 0 ),
+        multiMaterial );
+    this.shapes[2].position.set(0, 50, 0);
+    this.scene.add( this.shapes[2] );
+
+    // tetrahedron
+    this.shapes[3] = THREE.SceneUtils.createMultiMaterialObject(
+        new THREE.TetrahedronGeometry( 40, 0 ),
+        multiMaterial );
+    this.shapes[3].position.set(100, 50, 0);
+    this.scene.add( this.shapes[3] );
+
+    // sphere
+    this.shapes[4] = THREE.SceneUtils.createMultiMaterialObject(
+        new THREE.SphereGeometry( 40, 32, 16 ),
+        multiMaterial );
+    this.shapes[4].position.set(200, 50, 0);
+    this.scene.add( this.shapes[4] );
+};
 
 Game.update = function() {
-    x = 100 + 10 * randomInt(0, 5);
-    y = 100 + 10 * randomInt(0, 5);
-//and what the heck do these do?
-
-}
+    for (var i = 0; i < 5; i += 1)
+    {
+        this.shapes[i].translateX(randomInt(-5,5))
+        this.shapes[i].translateY(randomInt(-5,5))
+        this.shapes[i].translateZ(randomInt(-5,5))
+    }
+};
 
 Game.draw = function() {
-    this.context.clearRect(0, 0, this.width, this.height);
-    this.context.fillRect(x, y, 30, 30);
-    this.context.fillText("Frame #: " + frames, 10, 10);
-    this.context.fillText("FPS: " + this.fps, 10, 20);
-    this.context.fillText("Note: FPS is not tailored to performance. It fluctuates as a test.", 10, 30);
-}
+    this.renderer.render( this.scene, this.camera );
+};
