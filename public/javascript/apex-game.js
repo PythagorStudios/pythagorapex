@@ -46,10 +46,13 @@ Game.init = function() {
     this.camera.position.set(0,500,0);
     this.camera.lookAt(this.scene.position);
     // RENDERER
-    if ( Detector.webgl )
-        this.renderer = new THREE.WebGLRenderer( {antialias:true} );
-    else
+    if ( Detector.webgl ) {
+        this.renderer = new THREE.WebGLRenderer({antialias: true});
+    }
+    else {
+        alert("Using Canvas Renderer");
         this.renderer = new THREE.CanvasRenderer();
+    }
     this.renderer.setSize(this.width, this.height);
     this.container = document.getElementById( 'game' );
     this.container.appendChild( this.renderer.domElement );
@@ -72,6 +75,25 @@ Game.init = function() {
     floor.position.y = -0.5;
     floor.rotation.x = Math.PI / 2;
     this.scene.add(floor);
+    //Model Test
+    var manager = new THREE.LoadingManager();
+    manager.onProgress = function ( item, loaded, total ) {
+
+        console.log( item, loaded, total );
+
+    };
+
+    loadObj(manager, "../public/models/test_obj.obj", function(object) {
+        object.scale.x = 5;
+        object.scale.y = 5;
+        object.scale.z = 5;
+
+        object.position.z = 50;
+        object.position.y = 50;
+        Game.scene.add(object);
+        Game.person = object; //Test
+    });
+
     // SKYBOX/FOG
     var skyBoxGeometry = new THREE.CubeGeometry( 10000, 10000, 10000 );
     var skyBoxMaterial = new THREE.MeshBasicMaterial( { color: 0x9999ff, side: THREE.BackSide } );
@@ -85,6 +107,7 @@ Game.init = function() {
     var multiMaterial = [ darkMaterial, wireframeMaterial ];
 
     this.shapes = [];
+
 
     // cube
     this.shapes[0] = THREE.SceneUtils.createMultiMaterialObject(
@@ -120,14 +143,25 @@ Game.init = function() {
         multiMaterial );
     this.shapes[4].position.set(200, 50, 0);
     this.scene.add( this.shapes[4] );
+
+
 };
 
+var px = 0;
+var pv = -1;
+
 Game.update = function() {
-    for (var i = 0; i < 5; i += 1)
-    {
-        this.shapes[i].translateX(randomInt(-5,5))
-        this.shapes[i].translateY(randomInt(-5,5))
-        this.shapes[i].translateZ(randomInt(-5,5))
+    if (this.person != null) {
+        if (px < -150)
+        {
+            pv = 1;
+        }
+        if (px > 50)
+        {
+            pv = -1
+        }
+        px += pv;
+        this.person.position.x = px;
     }
 };
 
