@@ -148,7 +148,7 @@ Game.init = function() {
 
 var px = 0;
 var pv = -1;
-var pys = [0, 0, 0, 0, 0];
+var pys = [-40, -40, -40, -40, -40];
 var pyvs = [1, -1, 1, -1 ,1];
 
 Game.update = function() {
@@ -166,7 +166,7 @@ Game.update = function() {
     }
     for (var i = 0; i < 5; i += 1)
     {
-        if (pys[i] < -50)
+        if (pys[i] < -130)
         {
             pyvs[i] = 1;
         }
