@@ -100,9 +100,10 @@ Game.init = function() {
     this.scene.fog = new THREE.FogExp2( 0x9999ff, 0.00025 );
 
     // Using wireframe materials to illustrate shape details.
-    var darkMaterial = new THREE.MeshBasicMaterial( { color: 0xffffcc } );
+    //var darkMaterial = new THREE.MeshBasicMaterial( { color: 0xffffcc } );
+    var testMaterial = new THREE.MeshLambertMaterial( { color: 0xffffcc });
     var wireframeMaterial = new THREE.MeshBasicMaterial( { color: 0x000000, wireframe: true, transparent: true } );
-    var multiMaterial = [ darkMaterial, wireframeMaterial ];
+    var multiMaterial = [ testMaterial, wireframeMaterial ];
 
     this.shapes = [];
 
