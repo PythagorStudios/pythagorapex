@@ -147,6 +147,8 @@ Game.init = function() {
 
 var px = 0;
 var pv = -1;
+var pys = [0, 0, 0, 0, 0];
+var pyvs = [1, -1, 1, -1 ,1];
 
 Game.update = function() {
     if (this.person != null) {
@@ -160,6 +162,19 @@ Game.update = function() {
         }
         px += pv;
         this.person.position.x = px;
+    }
+    for (var i = 0; i < 5; i += 1)
+    {
+        if (pys[i] < -50)
+        {
+            pyvs[i] = 1;
+        }
+        if (pys[i] > 50)
+        {
+            pyvs[i] = -1
+        }
+        pys[i] += pyvs[i];
+        this.shapes[i].position.z = pys[i];
     }
 };
 
