@@ -84,12 +84,10 @@ Game.init = function() {
     };
 
     loadObj(manager, "../public/models/test_obj.obj", function(object) {
-        object.scale.x = 5;
-        object.scale.y = 5;
-        object.scale.z = 5;
+        object.scale.x = 10;
+        object.scale.y = 10;
+        object.scale.z = 10;
 
-        object.position.z = 50;
-        object.position.y = 50;
         Game.scene.add(object);
         Game.person = object; //Test
     });
@@ -152,11 +150,11 @@ var pv = -1;
 
 Game.update = function() {
     if (this.person != null) {
-        if (px < -150)
+        if (px < -250)
         {
             pv = 1;
         }
-        if (px > 50)
+        if (px > 100)
         {
             pv = -1
         }
