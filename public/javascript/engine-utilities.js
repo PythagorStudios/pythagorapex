@@ -60,7 +60,7 @@ var loadAudio = function(audioContext, mainVolume, path, name)
             sound.source.start(audioContext.currentTime); //TEST
 
             loadedSounds[name] = sound; //Add the loaded sound to the array.
-            alert("Successfully loaded " + path);
+            //alert("Successfully loaded " + path);
         }, function onFailure() {
             alert("Decoding the audio buffer failed");
             loadedSounds[name] = null; //Add null to the array to signify failing to decode sound file.
