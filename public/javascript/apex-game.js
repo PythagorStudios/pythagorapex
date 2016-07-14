@@ -77,11 +77,32 @@ Game.init = function() {
     this.scene.add(floor);
     //Model Test
     var manager = new THREE.LoadingManager();
+
+    // Detect if the audio context is supported by either vendor, else return null
+    window.AudioContext = (window.AudioContext || window.webkitAudioContext || null);
+
+    if (!AudioContext) {
+        alert("AudioContext not supported! Continue without audio?");
+    }
+    else
+    {
+        // Create a new audio context.
+        var audioContext = new AudioContext();
+
+        // Create a AudioGainNode to control the main volume.
+        var mainVolume = audioContext.createGain();
+        // Connect the main volume node to the context destination.
+        mainVolume.connect(audioContext.destination);
+
+        loadAudio(audioContext, mainVolume, "../public/audio/test_mp3.mp3");
+    }
+
+
+    /* This would work if THREE.JS "AudioLoader.js" worked.
     manager.onProgress = function ( item, loaded, total ) {
-
         console.log( item, loaded, total );
-
     };
+    */
 
     loadObj(manager, "../public/models/test_obj.obj", function(object) {
         object.scale.x = 10;
