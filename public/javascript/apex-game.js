@@ -197,7 +197,7 @@ Game.update = function() {
         }
         pys[i] += pyvs[i];
         this.shapes[i].position.z = pys[i];
-        this.shapes[i].rotation.y += 1;
+        this.shapes[i].rotation.y += 0.01;
     }
 };
 
