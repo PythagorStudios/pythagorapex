@@ -1,7 +1,5 @@
 /**
  * Created by finnb on 7/2/16.
-
- * Edited by gamester543 on 7/18/16.
  */
 
 var Game = {fps:60, width:1080, height:720};
