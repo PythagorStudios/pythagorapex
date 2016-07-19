@@ -1,5 +1,7 @@
 /**
  * Created by finnb on 7/2/16.
+
+ * Edited by gamester543 on 7/18/16.
  */
 
 var Game = {fps:60, width:1080, height:720};
@@ -8,33 +10,32 @@ var frames = 0;
 
 //this is a loop
 Game.run = (function() {
-    var loops = 0;
+    var loops = true;          //loops = 0 is the only one necessary if FPS does not fluctuate
     var skipTicks = 1000 / Game.fps;
     //maxFrameSkip = 10,
     var nextGameTick = (new Date).getTime();
     //lastGameTick;
 
-    return function() {
-        loops = 0;
-        //loops = 0 is the only one necessary if FPS does not fluctuate
-
+    return function() {    
         while ((new Date).getTime() > nextGameTick) {
             Game.update();
             nextGameTick += skipTicks;
-            loops++;
+            loops = false;
         }
 
-        if (!loops) {
+        if (loops) {       //No fluctuations 
             Game.draw((nextGameTick - (new Date).getTime()) / skipTicks); //Pass in elapsed time to be used later.
         } else {
             Game.draw(0);
         }
+        
     };
 })();
 
 Game.init = function() {
     // SCENE
     this.scene = new THREE.Scene();
+
     // CAMERA
     //var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;
     var VIEW_ANGLE = 45;
@@ -45,6 +46,7 @@ Game.init = function() {
     this.scene.add(this.camera);
     this.camera.position.set(0,500,0);
     this.camera.lookAt(this.scene.position);
+
     // RENDERER
     if ( Detector.webgl ) {
         this.renderer = new THREE.WebGLRenderer({antialias: true});
@@ -55,7 +57,8 @@ Game.init = function() {
     }
     this.renderer.setSize(this.width, this.height);
     this.container = document.getElementById( 'game' );
-    this.container.appendChild( this.renderer.domElement );
+    this.container.appendChild(this.renderer.domElement);
+
     // EVENTS
     //THREEx.WindowResize(renderer, camera);
     //THREEx.FullScreen.bindKey({ charCode : 'm'.charCodeAt(0) });
@@ -65,6 +68,7 @@ Game.init = function() {
     var light = new THREE.PointLight(0xffffff);
     light.position.set(0,250,0);
     this.scene.add(light);
+
     // FLOOR
     var floorTexture = new THREE.ImageUtils.loadTexture( "../public/images/crate.gif" );
     floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping;
@@ -75,6 +79,7 @@ Game.init = function() {
     floor.position.y = -0.5;
     floor.rotation.x = Math.PI / 2;
     this.scene.add(floor);
+
     //Model Test
     var manager = new THREE.LoadingManager();
 
@@ -169,7 +174,7 @@ Game.init = function() {
 
 var px = 0;
 var pv = -1;
-var pys = [-40, -40, -40, -40, -40];
+var pys = [-40, -40, -40, -40, -40];        //What do these mean?
 var pyvs = [1, -1, 1, -1 ,1];
 
 Game.update = function() {
@@ -201,6 +206,8 @@ Game.update = function() {
     }
 };
 
-Game.draw = function() {
+Game.draw = function (time) {
+    //Implement skipped ticks
+
     this.renderer.render( this.scene, this.camera );
 };
